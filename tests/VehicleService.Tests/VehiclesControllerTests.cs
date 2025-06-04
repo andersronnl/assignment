@@ -30,7 +30,7 @@ public class VehiclesControllerTests
     {
         // Arrange
         var mockService = new Mock<IVehicleService>();
-        mockService.Setup(x => x.GetVehicleAsync("ABC123"))
+        mockService.Setup(X => X.GetVehicleAsync("ABC123"))
             .ReturnsAsync(new Vehicle { RegistrationNumber = "ABC123" });
         
         var controller = new VehiclesController(mockService.Object);

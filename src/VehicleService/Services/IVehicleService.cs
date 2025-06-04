@@ -1,8 +1,8 @@
 namespace VehicleServiceApp.Services;
 
-using VehicleServiceApp.Models;
+using Models;
 
 public interface IVehicleService
 {
-    Task<Vehicle?> GetVehicleAsync(string registrationNumber);
+    public Task<Vehicle?> GetVehicleAsync(string RegistrationNumber);
 }

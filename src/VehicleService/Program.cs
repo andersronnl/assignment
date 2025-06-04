@@ -1,8 +1,7 @@
 using VehicleServiceApp.Services;
-using VehicleServiceApp.Models;
 using VehicleServiceApp.Middleware;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args); // ReSharper disable once UnusedParameter.Local
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -11,10 +10,10 @@ builder.Services.AddOpenApi(); // .NET 9 uses AddOpenApi instead of AddSwaggerGe
 // Register VehicleService
 builder.Services.AddScoped<IVehicleService, VehicleService>();
 
-// Register exception middleware
-builder.Services.AddTransient<ExceptionMiddleware>();
-
 var app = builder.Build();
+
+// Register exception middleware first to catch errors
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -26,9 +25,6 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-// Use custom exception middleware
-app.UseMiddleware<ExceptionMiddleware>();
-
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

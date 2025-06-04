@@ -1,30 +1,23 @@
-namespace InsuranceServiceApp.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
 using InsuranceServiceApp.Services;
 using InsuranceServiceApp.Models;
 
+namespace InsuranceServiceApp.Controllers;
 [ApiController]
 [Route("api/[controller]")]
-public class InsurancesController : ControllerBase
+public class InsurancesController(IInsuranceService InsuranceService) : ControllerBase
 {
-    private readonly IInsuranceService _insuranceService;
-    
-    public InsurancesController(IInsuranceService insuranceService)
-    {
-        _insuranceService = insuranceService;
-    }
-    
     [HttpGet("{personId}")]
-    public async Task<ActionResult<PersonInsuranceResponse>> GetPersonInsurances(string personId)
+    public async Task<ActionResult<PersonInsuranceResponse>> GetPersonInsurances(string PersonId)
     {
-        var response = await _insuranceService.GetPersonInsurancesAsync(personId);
+        var response = await InsuranceService.GetPersonInsurancesAsync(PersonId);
         
         if (response == null)
         {
-            return NotFound(new { 
+            return NotFound(new {
                 Success = false, 
-                ErrorMessage = $"No insurances found for person ID {personId}" 
+                ErrorMessage = $"No insurances found for person ID {PersonId}"
             });
         }
         

@@ -1,10 +1,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
-using InsuranceServiceApp.Models;
 using InsuranceServiceApp.Services;
 using VehicleServiceApp.Models;
-using VehicleServiceApp.Services;
 
 namespace InsuranceService.Tests;
 
@@ -15,7 +13,7 @@ public class InsuranceServiceTests
     {
         // Arrange
         var config = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string>
+            .AddInMemoryCollection((IDictionary<string, string?>)new Dictionary<string, string>
             {
                 ["PersonInsurances:12345:0:Type"] = "Car",
                 ["PersonInsurances:12345:0:MonthlyCost"] = "30",
@@ -24,7 +22,7 @@ public class InsuranceServiceTests
             .Build();
 
         var mockVehicleApi = new Mock<IVehicleApiClient>();
-        mockVehicleApi.Setup(x => x.GetVehicleAsync("ABC123"))
+        mockVehicleApi.Setup(X => X.GetVehicleAsync("ABC123"))
             .ReturnsAsync(new Vehicle { RegistrationNumber = "ABC123" });
 
         var mockLogger = new Mock<ILogger<InsuranceServiceApp.Services.InsuranceService>>();
@@ -39,7 +37,7 @@ public class InsuranceServiceTests
 
         // Assert
         Assert.NotNull(result);
-        var carInsurance = result!.Insurances.First(i => i.Type == "Car");
+        var carInsurance = result.Insurances.First(I => I.Type == "Car");
         Assert.NotNull(carInsurance.VehicleDetails);
         Assert.Equal("ABC123", carInsurance.VehicleDetails?.RegistrationNumber);
     }
@@ -49,7 +47,7 @@ public class InsuranceServiceTests
     {
         // Arrange
         var config = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string>())
+            .AddInMemoryCollection((IDictionary<string, string?>)new Dictionary<string, string>())
             .Build();
 
         var mockVehicleApi = new Mock<IVehicleApiClient>();
@@ -72,7 +70,7 @@ public class InsuranceServiceTests
     {
         // Arrange
         var config = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string>
+            .AddInMemoryCollection((IDictionary<string, string?>)new Dictionary<string, string>
             {
                 ["PersonInsurances:12345:0:Type"] = "Car",
                 ["PersonInsurances:12345:0:MonthlyCost"] = "30",
@@ -81,7 +79,7 @@ public class InsuranceServiceTests
             .Build();
 
         var mockVehicleApi = new Mock<IVehicleApiClient>();
-        mockVehicleApi.Setup(x => x.GetVehicleAsync("ABC123"))
+        mockVehicleApi.Setup(X => X.GetVehicleAsync("ABC123"))
             .ThrowsAsync(new HttpRequestException());
 
         var mockLogger = new Mock<ILogger<InsuranceServiceApp.Services.InsuranceService>>();
@@ -96,7 +94,7 @@ public class InsuranceServiceTests
 
         // Assert
         Assert.NotNull(result);
-        var carInsurance = result!.Insurances.First(i => i.Type == "Car");
+        var carInsurance = result.Insurances.First(I => I.Type == "Car");
         Assert.Null(carInsurance.VehicleDetails);
     }
 }

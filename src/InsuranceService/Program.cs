@@ -1,5 +1,4 @@
 using InsuranceServiceApp.Services;
-using InsuranceServiceApp.Models;
 using InsuranceServiceApp.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,12 +8,12 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi(); // .NET 9 uses AddOpenApi instead of AddSwaggerGen
 
 // Register HttpClientFactory with typed client
-builder.Services.AddHttpClient<IVehicleApiClient, VehicleApiClient>(client =>
+builder.Services.AddHttpClient<IVehicleApiClient, VehicleApiClient>(Client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:VehicleService"] ?? throw new InvalidOperationException("VehicleService URL is not configured"));
-    client.Timeout = TimeSpan.FromSeconds(30);
+    Client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:VehicleService"] ?? throw new InvalidOperationException("VehicleService URL is not configured"));
+    Client.Timeout = TimeSpan.FromSeconds(30);
 });
-builder.Services.AddScoped<IInsuranceService, InsuranceServiceApp.Services.InsuranceService>();
+builder.Services.AddScoped<IInsuranceService, InsuranceService>();
 
 var app = builder.Build();
 
@@ -33,4 +32,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

@@ -1,47 +1,40 @@
 namespace VehicleServiceApp.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
-using VehicleServiceApp.Services;
-using VehicleServiceApp.Models;
+using Services;
+using Models;
 
 [ApiController]
 [Route("api/[controller]")]
-public class VehiclesController : ControllerBase
+public class VehiclesController(IVehicleService VehicleService) : ControllerBase
 {
-    private readonly IVehicleService _vehicleService;
-    
-    public VehiclesController(IVehicleService vehicleService)
-    {
-        _vehicleService = vehicleService;
-    }
-    
     [HttpGet("{registrationNumber}")]
-    public async Task<ActionResult<ApiResponse<Vehicle>>> GetVehicle(string registrationNumber)
+    public async Task<ActionResult<ApiResponse<Vehicle>>> GetVehicle(string RegistrationNumber)
     {
-        if (string.IsNullOrWhiteSpace(registrationNumber))
+        if (string.IsNullOrWhiteSpace(RegistrationNumber))
         {
-            return BadRequest(new ApiResponse<Vehicle> 
-            { 
-                Success = false, 
-                ErrorMessage = "Registration number is required" 
+            return BadRequest(new ApiResponse<Vehicle>
+            {
+                Success = false,
+                ErrorMessage = "Registration number is required"
             });
         }
         
-        var vehicle = await _vehicleService.GetVehicleAsync(registrationNumber);
+        var vehicle = await VehicleService.GetVehicleAsync(RegistrationNumber);
         
         if (vehicle == null)
         {
-            return NotFound(new ApiResponse<Vehicle> 
-            { 
-                Success = false, 
-                ErrorMessage = $"Vehicle with registration {registrationNumber} not found" 
+            return NotFound(new ApiResponse<Vehicle>
+            {
+                Success = false,
+                ErrorMessage = $"Vehicle with registration {RegistrationNumber} not found"
             });
         }
         
-        return Ok(new ApiResponse<Vehicle> 
-        { 
-            Success = true, 
-            Data = vehicle 
+        return Ok(new ApiResponse<Vehicle>
+        {
+            Success = true,
+            Data = vehicle
         });
     }
 }

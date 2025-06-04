@@ -1,48 +1,38 @@
-using System.Net;
 using InsuranceServiceApp.Models;
 
 namespace InsuranceServiceApp.Middleware;
 
-public class ExceptionMiddleware
+public class ExceptionMiddleware(RequestDelegate Next, ILogger<ExceptionMiddleware> Logger)
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<ExceptionMiddleware> _logger;
-
-    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
-    {
-        _next = next;
-        _logger = logger;
-    }
-
-    public async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(HttpContext Context)
     {
         try
         {
-            await _next(context);
+            await Next(Context);
         }
-        catch (Exception ex)
+        catch (Exception Exception)
         {
-            _logger.LogError(ex, "An unhandled exception occurred.");
-            await HandleExceptionAsync(context, ex);
+            Logger.LogError(Exception, "An unhandled exception occurred.");
+            await HandleExceptionAsync(Context, Exception);
         }
     }
 
-    private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private static async Task HandleExceptionAsync(HttpContext Context, Exception Exception)
     {
-        context.Response.ContentType = "application/json";
+        Context.Response.ContentType = "application/json";
         var response = new ApiResponse<object>
         {
             Success = false,
             ErrorMessage = "An unexpected error occurred"
         };
         
-        context.Response.StatusCode = exception switch
+        Context.Response.StatusCode = Exception switch
         {
             HttpRequestException => 503,
             ArgumentException => 400,
             _ => 500
         };
         
-        await context.Response.WriteAsJsonAsync(response);
+        await Context.Response.WriteAsJsonAsync(response);
     }
 }

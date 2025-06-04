@@ -1,13 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿namespace StressTests;
 
-namespace StressTests;
-
-class Program
+internal static class Program // ReSharper disable once ClassNeverInstantiated.Global
 {
-    static async Task Main(string[] args)
+    private static async Task Main(string[] _) // ReSharper disable once UnusedParameter.Local
     {
         Console.WriteLine("Running insurance service stress test...");
-        await new InsuranceStressTest().Run();
+        await InsuranceStressTest.Run();
     }
 }
