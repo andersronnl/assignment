@@ -49,25 +49,20 @@ dotnet run --project tests/StressTests
 - Authentication/authorization for sensitive endpoints (future)
 
 ## DevOps Pipeline
-```yaml
-name: ThreadPilot CI
-on: [push]
-jobs:
-  build-and-test:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.0.x
-    - name: Restore
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
-```
+We've implemented a CI pipeline using Azure DevOps. The pipeline configuration is located in [azure-pipelines.yml](azure-pipelines.yml).
+
+The pipeline performs the following steps:
+- Triggers on changes to the main branch
+- Uses Windows build agents
+- Restores NuGet packages
+- Builds the solution in Release configuration
+- Runs all unit tests
+- Publishes build artifacts
+
+To set up the pipeline in Azure DevOps:
+1. Create a new pipeline and select "Existing Azure Pipelines YAML file"
+2. Point to the azure-pipelines.yml file in your repository
+3. Save and run the pipeline
 
 ## Personal Reflection
 This implementation demonstrates a clean microservice architecture pattern using HttpClientFactory for resilient service communication. The main challenge was designing the graceful degradation when upstream services fail while maintaining response consistency. If given more time, I would implement circuit breakers for the VehicleService integration and add integration tests covering failure scenarios.
