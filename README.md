@@ -5,8 +5,8 @@
 - HttpClientFactory for resilient service communication
 - Service layer pattern for business logic
 - Configuration-based data storage
-- Polly resilience policies for service-to-service calls
-- Global exception handling middleware
+- Standard ASP.NET Core error handling with ProblemDetails
+- Consistent ApiResponse<T> pattern for all endpoints
 
 ## Running Instructions
 ```bash
@@ -28,19 +28,19 @@ dotnet run --project tests/StressTests
 ```
 
 ## Error Handling Strategy
-- Stress testing to identify performance bottlenecks and failure points under load
-- Global exception middleware with proper HTTP status codes
-- Structured error responses
+- Standard ASP.NET Core exception handling with ProblemDetails
+- Consistent ApiResponse<T> wrapper for all API responses with Success/Error information
+- Proper HTTP status codes for different error scenarios
 - Graceful degradation when upstream services fail
-- Circuit breaker and retry policies for service dependencies
 - Comprehensive logging for debugging
+- Stress testing to identify performance bottlenecks
 
 ## Extensibility
-- API versioning support via URL path (/api/v1/...)
-- Swagger/OpenAPI documentation
+- OpenAPI documentation with .NET 9's AddOpenApi/MapOpenApi
+- Consistent ApiResponse<T> pattern makes it easy to extend with additional metadata
 - Easy to add new insurance types through configuration
 - Service interfaces allow for different implementations
-- HttpClient abstraction enables mocking
+- HttpClient abstraction for resilient service communication
 
 ## Security Considerations
 - Input validation to prevent injection attacks
@@ -65,4 +65,4 @@ To set up the pipeline in Azure DevOps:
 3. Save and run the pipeline
 
 ## Personal Reflection
-This implementation demonstrates a clean microservice architecture pattern using HttpClientFactory for resilient service communication. The main challenge was designing the graceful degradation when upstream services fail while maintaining response consistency. If given more time, I would implement circuit breakers for the VehicleService integration and add integration tests covering failure scenarios.
+This implementation demonstrates a balanced microservice architecture using ASP.NET Core's capabilities with a consistent ApiResponse pattern. The focus was on creating a maintainable solution with appropriate abstractions. The main challenge was ensuring consistent error handling and response formats across services while maintaining test compatibility. If given more time, I would add integration tests using WebApplicationFactory and implement more comprehensive validation with FluentValidation.

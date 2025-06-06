@@ -5,22 +5,14 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using VehicleServiceApp.Models;
 
-public class VehicleApiClient : IVehicleApiClient
+public class VehicleApiClient(HttpClient HttpClient, ILogger<VehicleApiClient> Logger) : IVehicleApiClient
 {
-    private readonly HttpClient _httpClient;
-    private readonly ILogger<VehicleApiClient> _logger;
-    
-    public VehicleApiClient(HttpClient httpClient, ILogger<VehicleApiClient> logger)
-    {
-        _httpClient = httpClient;
-        _logger = logger;
-    }
     
     public async Task<Vehicle?> GetVehicleAsync(string registrationNumber)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/vehicles/{registrationNumber}");
+            var response = await HttpClient.GetAsync($"api/vehicles/{registrationNumber}");
             
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -39,8 +31,8 @@ public class VehicleApiClient : IVehicleApiClient
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, "Failed to retrieve vehicle {RegistrationNumber}", registrationNumber);
-            throw;
+            Logger.LogError(ex, "Failed to retrieve vehicle {RegistrationNumber}", registrationNumber);
+            throw new InvalidOperationException($"Failed to retrieve vehicle with registration number {registrationNumber}", ex);
         }
     }
 }

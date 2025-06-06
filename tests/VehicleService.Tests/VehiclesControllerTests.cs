@@ -50,7 +50,7 @@ public class VehiclesControllerTests
     {
         // Arrange
         var mockService = new Mock<IVehicleService>();
-        mockService.Setup(x => x.GetVehicleAsync("INVALID"))
+        mockService.Setup(X => X.GetVehicleAsync("INVALID"))
             .ReturnsAsync((Vehicle?)null);
         
         var controller = new VehiclesController(mockService.Object);
